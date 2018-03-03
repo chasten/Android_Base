@@ -3,6 +3,7 @@ package com.android.base.androidbaseproject.presenter;
 
 import com.android.base.androidbaseproject.data.BaseData;
 import com.android.base.androidbaseproject.exception.RetrofitHttpException;
+import com.android.base.androidbaseproject.retrofit.RetrofitAppClient;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -10,21 +11,35 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.Interceptor;
 
 /**
  * mvp base Presenter
  * Created by secretqi on 2018/2/28.
  */
 
-public abstract class MvpPresenterIml<V> implements IPresenter<V> {
+public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
 
     public V mvpView;
     private CompositeDisposable mCompositeDisposable;
+    public K apiStores;
 
     @Override
     public void attachView(V mvpView) {
         this.mvpView = mvpView;
+        apiStores = new RetrofitAppClient.Builder()
+                .baseUrl(this.baseUrl())
+                .interceptor(this.interceptor())
+                .build()
+                .retrofit()
+                .create(this.getAPIStores());
     }
+
+    public abstract String baseUrl();
+
+    public abstract Class<K> getAPIStores();
+
+    public abstract Interceptor interceptor();
 
     @Override
     public void detachView() {
