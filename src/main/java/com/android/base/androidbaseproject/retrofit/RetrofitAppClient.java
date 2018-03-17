@@ -6,7 +6,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
@@ -51,7 +51,6 @@ public final class RetrofitAppClient {
         }
 
         public Builder build() {
-            okHttpClient = okHttpBuilder.build();
             if (BuildConfig.DEBUG) {
                 // Log信息拦截器
                 HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -59,6 +58,7 @@ public final class RetrofitAppClient {
                 //设置 Debug Log 模式
                 okHttpBuilder.addInterceptor(loggingInterceptor);
             }
+            okHttpClient = okHttpBuilder.build();
             return this;
         }
 
@@ -69,7 +69,7 @@ public final class RetrofitAppClient {
             return new Retrofit.Builder()
                     .baseUrl(this.baseUrl)
                     .addConverterFactory(JacksonConverterFactory.create())
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .client(okHttpClient)
                     .build();
         }

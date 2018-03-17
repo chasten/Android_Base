@@ -44,13 +44,13 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
     @Override
     public void detachView() {
         this.mvpView = null;
-        this.onUnsubscribe();
+        this.clearSubscribe();
     }
 
     /**
      * RXjava取消注册，以避免内存泄露
      */
-    private void onUnsubscribe() {
+    private void clearSubscribe() {
         if (null != this.mCompositeDisposable) {
             this.mCompositeDisposable.clear();
         }
@@ -60,10 +60,14 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
         if (null == this.mCompositeDisposable) {
             this.mCompositeDisposable = new CompositeDisposable();
         }
-        Consumer<T> consumer = response::accept;
+        Consumer<T> consumer = t -> {
+            response.accept(t);
+            response.onComplete();
+        };
         Consumer<Throwable> throwableConsumer = throwable -> {
             RetrofitHttpException.ResponseThrowable responseThrowable = RetrofitHttpException.retrofitException(throwable);
             response.responseMessage(responseThrowable.code, responseThrowable.message);
+            response.onComplete();
         };
         this.mCompositeDisposable.add(observable
                 .map(new HttpResultFunc<>())
@@ -100,6 +104,8 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
         void accept(T t);
 
         void responseMessage(int code, String message);
+
+        void onComplete();
     }
 
 }

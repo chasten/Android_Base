@@ -11,10 +11,16 @@ public interface MvpView {
 //
 //    void hideLoading();
 //
-//    /**
-//     * show message
-//     * @param msg
-//     */
-//    void showMgs(String msg);
+    /**
+     * show message
+     * @param msg message
+     */
+    void showMgs(String msg);
+
+    /**
+     * show message
+     * @param resId message
+     */
+    void showMgs(int resId);
 
 }

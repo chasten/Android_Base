@@ -1,16 +1,14 @@
 package com.android.base.androidbaseproject;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
 
 public abstract class BaseFragment extends Fragment {
 
@@ -42,27 +40,14 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        onUnsubscribe();
     }
 
-    private CompositeSubscription mCompositeSubscription;
-
-    public void onUnsubscribe() {
-        //取消注册，以避免内存泄露
-        if (mCompositeSubscription != null) {
-            mCompositeSubscription.unsubscribe();
-        }
+    public void toastShow(int resId) {
+        Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
     }
 
-    public void toastShow(String resId) {
-        Toast.makeText(getActivity(), resId + "", Toast.LENGTH_SHORT).show();
-    }
-
-    public void addSubscription(Subscription subscription) {
-//        if (mCompositeSubscription == null) {
-        mCompositeSubscription = new CompositeSubscription();
-//        }
-        mCompositeSubscription.add(subscription);
+    public void toastShow(String msg) {
+        Toast.makeText(getActivity(), msg + "", Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -15,7 +15,6 @@ public abstract class MvpActivity<P extends MvpPresenterIml> extends BaseActivit
     protected void onCreate(Bundle savedInstanceState) {
         this.mvpPresenter = createPresenter();
         super.onCreate(savedInstanceState);
-        this.initView();
     }
 
     protected abstract P createPresenter();
@@ -27,7 +26,5 @@ public abstract class MvpActivity<P extends MvpPresenterIml> extends BaseActivit
             this.mvpPresenter.detachView();
         }
     }
-
-    public abstract void initView();
 
 }
