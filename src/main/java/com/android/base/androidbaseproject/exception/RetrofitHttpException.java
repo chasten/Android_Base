@@ -3,7 +3,9 @@ package com.android.base.androidbaseproject.exception;
 import com.fasterxml.jackson.core.JsonParseException;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -30,7 +32,7 @@ public class RetrofitHttpException {
     private static final int SERVICE_UNAVAILABLE = 503;
     private static final int GATEWAY_TIMEOUT = 504;
 
-    public static ResponseThrowable retrofitException(Throwable e) {
+    public static ResponseThrowable retrofitException(Throwable e) throws IOException {
         ResponseThrowable ex;
         if (e instanceof HttpException) {
             HttpException httpException = (HttpException) e;
@@ -45,7 +47,7 @@ public class RetrofitHttpException {
                 case BAD_GATEWAY:
                 case SERVICE_UNAVAILABLE:
                 default:
-                    ex.message = "网络错误";
+                    ex.message = httpException.response().errorBody().string();
                     break;
             }
             return ex;
@@ -53,7 +55,13 @@ public class RetrofitHttpException {
             // 服务器下发的错误
             ServerException resultException = (ServerException) e;
             ex = new ResponseThrowable(resultException, resultException.code);
-            ex.message = resultException.getMessage();
+            try {
+                JSONObject jsonObject = new JSONObject(resultException.getMessage());
+                ex.message = jsonObject.optString("message");
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+                ex.message = "服务器错误";
+            }
             return ex;
         } else if (e instanceof JsonParseException
                 || e instanceof JSONException
@@ -107,7 +115,6 @@ public class RetrofitHttpException {
     public static class ResponseThrowable extends Exception {
         public int code;
         public String message;
-
         public ResponseThrowable(Throwable throwable, int code) {
             super(throwable);
             this.code = code;

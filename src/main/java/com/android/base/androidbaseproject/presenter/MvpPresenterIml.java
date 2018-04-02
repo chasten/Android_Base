@@ -3,8 +3,11 @@ package com.android.base.androidbaseproject.presenter;
 
 import com.android.base.androidbaseproject.data.BaseData;
 import com.android.base.androidbaseproject.exception.RetrofitHttpException;
+import com.android.base.androidbaseproject.exception.ServerException;
 import com.android.base.androidbaseproject.retrofit.RetrofitAppClient;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+
+import java.io.IOException;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -13,6 +16,8 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
+import retrofit2.HttpException;
+import retrofit2.Response;
 
 /**
  * mvp base Presenter
@@ -31,6 +36,7 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
         apiStores = new RetrofitAppClient.Builder()
                 .baseUrl(this.baseUrl())
                 .interceptor(this.interceptor())
+                .cookieJar(this.cookieJar())
                 .build()
                 .retrofit()
                 .create(this.getAPIStores());
@@ -59,7 +65,7 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
         }
     }
 
-    public <T> void addSubscription(final Observable<BaseData<T>> observable, final RetrofitResponse<T> response) {
+    public <T> void addSubscription(final Observable<Response<T>> observable, final RetrofitResponse<T> response) {
         if (null == this.mCompositeDisposable) {
             this.mCompositeDisposable = new CompositeDisposable();
         }
@@ -84,17 +90,21 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
      * 用来统一处理Http的resultCode,并将HttpResult的Data部分剥离出来返回给subscriber
      * @param <T> Subscriber真正需要的数据类型，也就是Data部分的数据类型
      */
-    private class HttpResultFunc<T> implements Function<BaseData<T>, T> {
+    private class HttpResultFunc<T> implements Function<Response<T>, T> {
 
         @Override
-        public T apply(BaseData<T> tBaseData) {
-            if (tBaseData.getStatusCode() != 200) {
-                throw new RuntimeException(tBaseData.getMessage());
+        public T apply(Response<T> response) {
+            if (response.code() != 200) {
+                String message;
+                try {
+                    message = response.errorBody().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    message = e.getMessage();
+                }
+                throw new ServerException(response.code(), message);
             }
-            if (null == tBaseData.getContent()) {
-                return (T) tBaseData;
-            }
-            return tBaseData.getContent();
+            return response.body();
         }
     }
 

@@ -1,39 +1,24 @@
 package com.android.base.androidbaseproject.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Base data structure
  * Created by secretqi on 2018/3/1.
  */
 
-public class BaseData<T> {
-
-    private int statusCode;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class BaseData {
 
     private String message;
-
-    private T content;
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
 
     public String getMessage() {
         return message;
     }
 
+    @JsonProperty("message")
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public T getContent() {
-        return content;
-    }
-
-    public void setContent(T content) {
-        this.content = content;
     }
 }
