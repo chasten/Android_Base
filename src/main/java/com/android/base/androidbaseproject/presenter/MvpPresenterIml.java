@@ -4,6 +4,7 @@ package com.android.base.androidbaseproject.presenter;
 import com.android.base.androidbaseproject.data.BaseData;
 import com.android.base.androidbaseproject.exception.RetrofitHttpException;
 import com.android.base.androidbaseproject.retrofit.RetrofitAppClient;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,6 +41,8 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
     public abstract Class<K> getAPIStores();
 
     public abstract Interceptor interceptor();
+
+    public abstract PersistentCookieJar cookieJar();
 
     @Override
     public void detachView() {

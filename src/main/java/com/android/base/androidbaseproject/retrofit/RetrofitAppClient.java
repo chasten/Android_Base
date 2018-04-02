@@ -1,6 +1,7 @@
 package com.android.base.androidbaseproject.retrofit;
 
 import com.android.base.androidbaseproject.BuildConfig;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -11,7 +12,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Retrofit app client
- * Created by secretqi on 2018/3/3.
+ * Created by secretqi on 2018/3/29.
  */
 
 public final class RetrofitAppClient {
@@ -46,6 +47,13 @@ public final class RetrofitAppClient {
         public Builder interceptor(Interceptor interceptor) {
             if (null != interceptor) {
                 okHttpBuilder.addInterceptor(interceptor);
+            }
+            return this;
+        }
+
+        public Builder cookieJar(PersistentCookieJar cookieJar) {
+            if (null != cookieJar) {
+                okHttpBuilder.cookieJar(cookieJar);
             }
             return this;
         }
