@@ -1,7 +1,6 @@
 package com.android.base.androidbaseproject.presenter;
 
 
-import com.android.base.androidbaseproject.data.BaseData;
 import com.android.base.androidbaseproject.exception.RetrofitHttpException;
 import com.android.base.androidbaseproject.exception.ServerException;
 import com.android.base.androidbaseproject.retrofit.RetrofitAppClient;
@@ -16,7 +15,6 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
-import retrofit2.HttpException;
 import retrofit2.Response;
 
 /**
@@ -86,11 +84,32 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
 
     }
 
+    public <T> void concatSubscription(final Observable<Response<? extends T>> observable1, final Observable<Response<? extends T>> observable2, final RetrofitResponse<T> response) {
+        if (null == this.mCompositeDisposable) {
+            this.mCompositeDisposable = new CompositeDisposable();
+        }
+        Observable concatObservable = Observable.concat(observable1, observable2);
+        Consumer<? extends T> consumer = t -> {
+            response.accept(t);
+            response.onComplete();
+        };
+        Consumer<Throwable> throwableConsumer = throwable -> {
+            RetrofitHttpException.ResponseThrowable responseThrowable = RetrofitHttpException.retrofitException(throwable);
+            response.responseMessage(responseThrowable.code, responseThrowable.message);
+            response.onComplete();
+        };
+        this.mCompositeDisposable.add(concatObservable
+                .map(new HttpResultFunc<>())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(consumer, throwableConsumer));
+    }
+
     /**
      * 用来统一处理Http的resultCode,并将HttpResult的Data部分剥离出来返回给subscriber
      * @param <T> Subscriber真正需要的数据类型，也就是Data部分的数据类型
      */
-    private class HttpResultFunc<T> implements Function<Response<T>, T> {
+    public class HttpResultFunc<T> implements Function<Response<T>, T> {
 
         @Override
         public T apply(Response<T> response) {

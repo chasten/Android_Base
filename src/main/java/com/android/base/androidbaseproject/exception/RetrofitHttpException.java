@@ -33,6 +33,7 @@ public class RetrofitHttpException {
     private static final int GATEWAY_TIMEOUT = 504;
 
     public static ResponseThrowable retrofitException(Throwable e) throws IOException {
+        e.printStackTrace();
         ResponseThrowable ex;
         if (e instanceof HttpException) {
             HttpException httpException = (HttpException) e;
