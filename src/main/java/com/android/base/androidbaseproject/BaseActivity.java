@@ -1,7 +1,10 @@
 package com.android.base.androidbaseproject;
 
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +18,7 @@ import butterknife.ButterKnife;
 public class BaseActivity extends AppCompatActivity {
 
     public Activity mActivity;
+    private static final int PERMISSION_REQUEST_CODE = 1;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
@@ -83,11 +87,35 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void toast(int resId) {
+    protected void requestPermission(String permission) {
+        if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, PERMISSION_REQUEST_CODE);
+            return;
+        } else {
+            this.onPermissionGranted(permission);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                this.onPermissionGranted(permissions[0]);
+            } else {
+                this.toast("您已拒绝使用权限");
+            }
+        }
+    }
+
+    protected void onPermissionGranted(String permission) {
+
+    }
+
+    protected void toast(int resId) {
         Toast.makeText(mActivity, resId, Toast.LENGTH_SHORT).show();
     }
 
-    public void toast(CharSequence sequence) {
+    protected void toast(CharSequence sequence) {
         Toast.makeText(mActivity, sequence, Toast.LENGTH_SHORT).show();
     }
 
