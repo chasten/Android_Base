@@ -97,6 +97,9 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
             RetrofitHttpException.ResponseThrowable responseThrowable = RetrofitHttpException.retrofitException(throwable);
             response.responseMessage(responseThrowable.code, responseThrowable.message);
             response.onComplete();
+            if (responseThrowable.code == 401) {
+                onCookieTimeOut();
+            }
         };
         this.mCompositeDisposable.add(concatObservable
                 .map(new HttpResultFunc<>())
@@ -104,6 +107,8 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(consumer, throwableConsumer));
     }
+
+    protected abstract void onCookieTimeOut();
 
     /**
      * 用来统一处理Http的resultCode,并将HttpResult的Data部分剥离出来返回给subscriber
