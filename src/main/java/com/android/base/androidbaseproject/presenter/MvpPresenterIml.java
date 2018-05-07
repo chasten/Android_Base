@@ -75,6 +75,9 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
             RetrofitHttpException.ResponseThrowable responseThrowable = RetrofitHttpException.retrofitException(throwable);
             response.responseMessage(responseThrowable.code, responseThrowable.message);
             response.onComplete();
+            if (responseThrowable.code == 401) {
+                onCookieTimeOut();
+            }
         };
         this.mCompositeDisposable.add(observable
                 .map(new HttpResultFunc<>())
