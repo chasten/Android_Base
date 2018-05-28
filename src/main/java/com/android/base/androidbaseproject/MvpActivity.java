@@ -19,10 +19,14 @@ public abstract class MvpActivity<P extends MvpPresenterIml> extends BaseActivit
 
     protected abstract P createPresenter();
 
+    protected void post(Object o) {
+        this.mvpPresenter.post(o);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (this.mvpPresenter != null) {
+        if (null != this.mvpPresenter) {
             this.mvpPresenter.detachView();
         }
     }

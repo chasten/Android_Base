@@ -1,4 +1,4 @@
-package com.android.base.androidbaseproject.data;
+package com.android.base.androidbaseproject.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,26 +12,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BaseData implements Parcelable {
+public class BaseModel implements Parcelable {
 
     private String message;
 
-    public BaseData() {
+    public BaseModel() {
     }
 
-    protected BaseData(Parcel in) {
+    protected BaseModel(Parcel in) {
         message = in.readString();
     }
 
-    public static final Creator<BaseData> CREATOR = new Creator<BaseData>() {
+    public static final Creator<BaseModel> CREATOR = new Creator<BaseModel>() {
         @Override
-        public BaseData createFromParcel(Parcel in) {
-            return new BaseData(in);
+        public BaseModel createFromParcel(Parcel in) {
+            return new BaseModel(in);
         }
 
         @Override
-        public BaseData[] newArray(int size) {
-            return new BaseData[size];
+        public BaseModel[] newArray(int size) {
+            return new BaseModel[size];
         }
     };
 

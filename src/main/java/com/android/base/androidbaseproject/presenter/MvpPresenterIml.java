@@ -1,6 +1,7 @@
 package com.android.base.androidbaseproject.presenter;
 
 
+import com.android.base.androidbaseproject.rxbus.RxBus;
 import com.android.base.androidbaseproject.exception.RetrofitHttpException;
 import com.android.base.androidbaseproject.exception.ServerException;
 import com.android.base.androidbaseproject.retrofit.RetrofitAppClient;
@@ -63,18 +64,51 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
         }
     }
 
+    /**
+     * Rxbus post event
+     * @param o
+     */
+    public void post(Object o) {
+        RxBus.getInstance().post(o);
+    }
+
+    /**
+     * Rxbus register event
+     * @param tClass
+     * @param callback
+     */
+    public <T> void registerEvent(Class<T> tClass, RxBusCallback<T> callback) {
+        if (null == this.mCompositeDisposable) {
+            this.mCompositeDisposable = new CompositeDisposable();
+        }
+        this.mCompositeDisposable.add(RxBus.getInstance().toObservable(tClass)
+                .subscribe(t -> {
+                    if (null != callback) {
+                        callback.accept(t);
+                    }
+                }, throwable -> {
+                    if (null != callback) {
+                        callback.error(throwable.getMessage());
+                    }
+                }));
+    }
+
     public <T> void addSubscription(final Observable<Response<T>> observable, final RetrofitResponse<T> response) {
         if (null == this.mCompositeDisposable) {
             this.mCompositeDisposable = new CompositeDisposable();
         }
         Consumer<T> consumer = t -> {
-            response.accept(t);
-            response.onComplete();
+            if (null != response) {
+                response.accept(t);
+                response.onComplete();
+            }
         };
         Consumer<Throwable> throwableConsumer = throwable -> {
             RetrofitHttpException.ResponseThrowable responseThrowable = RetrofitHttpException.retrofitException(throwable);
-            response.responseMessage(responseThrowable.code, responseThrowable.message);
-            response.onComplete();
+            if (null != response) {
+                response.responseMessage(responseThrowable.code, responseThrowable.message);
+                response.onComplete();
+            }
             if (responseThrowable.code == 401) {
                 onCookieTimeOut();
             }
@@ -93,13 +127,17 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
         }
         Observable concatObservable = Observable.concat(observable1, observable2);
         Consumer<? extends T> consumer = t -> {
-            response.accept(t);
-            response.onComplete();
+            if (null != response) {
+                response.accept(t);
+                response.onComplete();
+            }
         };
         Consumer<Throwable> throwableConsumer = throwable -> {
             RetrofitHttpException.ResponseThrowable responseThrowable = RetrofitHttpException.retrofitException(throwable);
-            response.responseMessage(responseThrowable.code, responseThrowable.message);
-            response.onComplete();
+            if (null != response) {
+                response.responseMessage(responseThrowable.code, responseThrowable.message);
+                response.onComplete();
+            }
             if (responseThrowable.code == 401) {
                 onCookieTimeOut();
             }
@@ -146,6 +184,13 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
         void responseMessage(int code, String message);
 
         void onComplete();
+    }
+
+    public interface RxBusCallback<T> {
+
+        void accept(T t);
+
+        void error(String message);
     }
 
 }

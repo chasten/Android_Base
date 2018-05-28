@@ -14,6 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -27,7 +31,6 @@ public class BaseActivity extends AppCompatActivity {
         this.initToolBar();
         mActivity = this;
     }
-
 
     @Override
     public void setContentView(View view) {
