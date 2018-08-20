@@ -14,10 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -61,12 +57,11 @@ public class BaseActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (null != toolbar) {
             setSupportActionBar(toolbar);
-            if (null != getSupportActionBar()) {
-                // TODO: 2018/3/1 修改资源id
-                getSupportActionBar().setHomeAsUpIndicator(0);
-            }
         } else {
             this.setDisplayHomeAsUpEnabled(true);
+        }
+        if (null != getSupportActionBar()) {
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
         }
     }
 
@@ -114,11 +109,11 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    protected void toast(int resId) {
+    public void toast(int resId) {
         Toast.makeText(mActivity, resId, Toast.LENGTH_SHORT).show();
     }
 
-    protected void toast(CharSequence sequence) {
+    public void toast(CharSequence sequence) {
         Toast.makeText(mActivity, sequence, Toast.LENGTH_SHORT).show();
     }
 

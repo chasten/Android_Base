@@ -7,20 +7,26 @@ package com.android.base.androidbaseproject.mvpview;
 
 public interface MvpView {
 
-//    void showLoading();
-//
-//    void hideLoading();
-//
     /**
-     * show message
-     * @param msg message
+     * Show loading dialog
      */
-    void showMgs(String msg);
+    void showLoading();
 
     /**
-     * show message
-     * @param resId message
+     * Hide loading dialog
      */
-    void showMgs(int resId);
+    void hideLoading();
+
+    /**
+     * Toast message for short time
+     * @param sequence message
+     */
+    void toast(CharSequence sequence);
+
+    /**
+     * Toast message for short time
+     * @param resId message id
+     */
+    void toast(int resId);
 
 }

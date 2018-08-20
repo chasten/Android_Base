@@ -23,6 +23,20 @@ public abstract class MvpActivity<P extends MvpPresenterIml> extends BaseActivit
         this.mvpPresenter.post(o);
     }
 
+    /**
+     * Show loading
+     */
+    public void showLoading() {
+
+    }
+
+    /**
+     * Hide loading
+     */
+    public void hideLoading() {
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
