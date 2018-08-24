@@ -16,6 +16,19 @@ public abstract class MvpFragment<P extends MvpPresenterIml> extends BaseFragmen
 
     protected abstract P createPresenter();
 
+    /**
+     * Show loading
+     */
+    public void showLoading() {
+
+    }
+
+    /**
+     * Hide loading
+     */
+    public void hideLoading() {
+
+    }
 
     @Override
     public void onDestroyView() {

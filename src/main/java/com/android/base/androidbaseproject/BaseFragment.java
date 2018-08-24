@@ -1,8 +1,8 @@
 package com.android.base.androidbaseproject;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,11 +42,11 @@ public abstract class BaseFragment extends Fragment {
         super.onDestroy();
     }
 
-    public void toastShow(int resId) {
+    public void toast(int resId) {
         Toast.makeText(getActivity(), resId, Toast.LENGTH_SHORT).show();
     }
 
-    public void toastShow(String msg) {
+    public void toast(CharSequence msg) {
         Toast.makeText(getActivity(), msg + "", Toast.LENGTH_SHORT).show();
     }
 
