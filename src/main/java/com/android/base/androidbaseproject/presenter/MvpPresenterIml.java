@@ -12,6 +12,7 @@ import java.io.IOException;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -147,6 +148,13 @@ public abstract class MvpPresenterIml<K, V> implements IPresenter<V> {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(consumer, throwableConsumer));
+    }
+
+    public void addSubscription(Disposable disposable) {
+        if (null == this.mCompositeDisposable) {
+            this.mCompositeDisposable = new CompositeDisposable();
+        }
+        this.mCompositeDisposable.add(disposable);
     }
 
     protected abstract void onCookieTimeOut();
