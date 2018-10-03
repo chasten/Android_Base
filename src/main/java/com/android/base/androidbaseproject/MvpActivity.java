@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.android.base.androidbaseproject.presenter.MvpPresenterIml;
 import com.android.base.androidbaseproject.utils.LanguageUtil;
 import com.android.base.androidbaseproject.utils.MyContextWrapper;
+import com.android.base.androidbaseproject.widget.LoadingDialog;
 
 import java.util.Locale;
 
@@ -16,6 +17,8 @@ import java.util.Locale;
  */
 public abstract class MvpActivity<P extends MvpPresenterIml> extends BaseActivity {
     protected P mvpPresenter;
+
+    private LoadingDialog mLoadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +42,21 @@ public abstract class MvpActivity<P extends MvpPresenterIml> extends BaseActivit
      * Show loading
      */
     public void showLoading() {
-
+        if (null == this.mLoadingDialog) {
+            this.mLoadingDialog = new LoadingDialog(this);
+        }
+        if (!this.mLoadingDialog.isShowing()) {
+            this.mLoadingDialog.show();
+        }
     }
 
     /**
      * Hide loading
      */
     public void hideLoading() {
-
+        if (null != this.mLoadingDialog && this.mLoadingDialog.isShowing()) {
+            this.mLoadingDialog.dismiss();
+        }
     }
 
     @Override
