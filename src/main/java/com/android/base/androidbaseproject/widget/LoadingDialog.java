@@ -10,8 +10,16 @@ import android.widget.ProgressBar;
 import com.android.base.androidbaseproject.R;
 
 public class LoadingDialog extends Dialog {
+
+    private int mColor = Color.WHITE;
+
     public LoadingDialog(@NonNull Context context) {
         this(context, R.style.dialog);
+    }
+
+    public LoadingDialog(@NonNull Context context, String color) {
+        this(context, R.style.dialog);
+        this.mColor = Color.parseColor(color);
     }
 
     public LoadingDialog(@NonNull Context context, int themeResId) {
@@ -27,7 +35,7 @@ public class LoadingDialog extends Dialog {
 
         ProgressBar progressBar = findViewById(R.id.progress_loading);
         ProgressDrawable drawable = new ProgressDrawable();
-        drawable.setColor(Color.WHITE);
+        drawable.setColor(this.mColor);
         progressBar.setIndeterminateDrawable(drawable);
     }
 }
