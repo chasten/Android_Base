@@ -61,28 +61,28 @@ public class RetrofitHttpException {
                 ex.message = jsonObject.optString("message");
             } catch (JSONException e1) {
                 e1.printStackTrace();
-                ex.message = "服务器错误";
+                ex.message = "Server error!";
             }
             return ex;
         } else if (e instanceof JsonParseException
                 || e instanceof JSONException
                 || e instanceof ParseException) {
             ex = new ResponseThrowable(e, ERROR.PARSE_ERROR);
-            ex.message = "解析错误";
+            ex.message = "Parse error!";
             return ex;
         } else if (e instanceof ConnectException
                 || e instanceof SocketTimeoutException
                 || e instanceof UnknownHostException) {
             ex = new ResponseThrowable(e, ERROR.NETWORD_ERROR);
-            ex.message = "连接失败";
+            ex.message = "Connect failed!";
             return ex;
         } else if (e instanceof SSLHandshakeException) {
             ex = new ResponseThrowable(e, ERROR.SSL_ERROR);
-            ex.message = "证书验证失败";
+            ex.message = "SSL error!";
             return ex;
         } else {
             ex = new ResponseThrowable(e, ERROR.UNKNOWN);
-            ex.message = "未知错误";
+            ex.message = "Unknown error!";
             return ex;
         }
     }
